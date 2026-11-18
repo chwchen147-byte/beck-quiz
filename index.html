@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+
+<html lang="zh-Hant">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta name="viewport" content="width=device-width,initial-scale=1">
+
+<title>Beck 認知治療知識挑戰</title>
+
+<style>
+
+*{box-sizing:border-box}
+
+body{margin:0;background:#FDFAF6;color:#40384b;font-family:-apple-system,BlinkMacSystemFont,"Noto Sans TC",sans-serif;line-height:1.7}
+
+main{max-width:560px;margin:auto;padding:24px 18px 50px}
+
+header{text-align:center;font-size:12px;letter-spacing:3px;color:#8c79a8;margin:12px 0 25px}
+
+.card{background:white;border:1px solid #eee7f3;border-radius:24px;padding:27px 22px;box-shadow:0 9px 30px #8c79a812}
+
+h1{font-size:28px;line-height:1.4;margin:12px 0}
+
+h2{font-size:21px;line-height:1.5}
+
+p{color:#716879}
+
+.center{text-align:center}
+
+.art{font-size:52px;margin:15px}
+
+.tag{display:inline-block;background:#f1e9fa;color:#795e9d;border-radius:30px;padding:5px 14px;font-size:13px}
+
+button{font:inherit;cursor:pointer}
+
+.primary{display:block;width:100%;background:#a78acb;color:white;border:0;border-radius:15px;padding:15px;margin-top:22px;font-weight:700}
+
+.primary:disabled{opacity:.45}
+
+.option{display:block;width:100%;text-align:left;background:#faf7fd;border:2px solid #eee6f5;border-radius:14px;padding:14px;margin:11px 0;color:#40384b}
+
+.option.selected{border-color:#a78acb;background:#f0e8fa}
+
+.option.correct{border-color:#7bb9a2;background:#edf8f2}
+
+.option.wrong{border-color:#e6a0a7;background:#fff0f1}
+
+.option:disabled{cursor:default}
+
+.bar{height:9px;background:#eee7f3;border-radius:10px;overflow:hidden;margin:15px 0}
+
+.fill{height:100%;background:#b49ad6;transition:width .3s}
+
+.meta{display:flex;justify-content:space-between;font-size:13px;color:#887b95}
+
+.feedback{background:#f6f0fb;border-radius:14px;padding:14px;margin-top:15px;font-size:14px}
+
+.score{font-size:65px;font-weight:800;color:#9777bf;line-height:1.3}
+
+.review{background:#faf7fd;border-radius:15px;padding:15px;margin:12px 0}
+
+small{color:#887b95}
+
+</style>
+
+</head>
+
+<body>
+
+<main>
+
+<header>BECK COGNITIVE THERAPY · QUIZ</header>
+
+<div id="app"></div>
+
+</main>
+
+<script>
+
+const questions=[
+
+{
+
+q:"Aaron T. Beck 在 1960 年代創立的是哪一種治療？",
+
+o:["精神分析治療","認知治療","完形治療","個人中心治療"],
+
+a:1,
+
+e:"Beck 從精神分析研究轉向關注意識層面的負向自動化思考，並於 1960 年代創立認知治療（CT）。"
+
+},
+
+{
+
+q:"依照 Beck 的認知模式，下列哪個順序是由表層到深層？",
+
+o:["核心信念 → 中介信念 → 自動化思考","中介信念 → 核心信念 → 自動化思考","自動化思考 → 中介信念 → 核心信念","自動化思考 → 核心信念 → 中介信念"],
+
+a:2,
+
+e:"三層認知結構由表層到深層，依序是自動化思考、中介信念、核心信念。"
+
+},
+
+{
+
+q:"朋友沒有回訊息，你立刻想到「他一定討厭我了」，最符合哪個概念？",
+
+o:["自動化思考","行為實驗","核心信念","治療同盟"],
+
+a:0,
+
+e:"自動化思考是在特定情境下迅速冒出的念頭，常被當作事實，卻不一定經過驗證。"
+
+},
+
+{
+
+q:"「如果我沒有做到完美，就代表我完全失敗。」最符合哪一種認知扭曲？",
+
+o:["個人化","心理過濾","情緒化推理","非黑即白思考"],
+
+a:3,
+
+e:"非黑即白思考將事情分成成功或失敗兩端，忽略中間的可能性。"
+
+},
+
+{
+
+q:"Beck 所說的「負面認知三角」包含哪三個面向？",
+
+o:["過去、現在、未來","自我、世界、未來","情緒、行為、生理","家庭、學校、社會"],
+
+a:1,
+
+e:"負面認知三角指對自我、世界與未來的負面看法，三者可能相互強化。"
+
+},
+
+{
+
+q:"「我必須隨時滿足所有人的期待」最符合哪個認知層次？",
+
+o:["自動化思考","認知基模以外的生理反應","中介信念","核心信念"],
+
+a:2,
+
+e:"中介信念包含態度、規則與假設；「我必須……」是對自己的規則與要求。"
+
+},
+
+{
+
+q:"治療師問：「有什麼證據支持這個想法？還有其他解釋嗎？」最符合哪項技術？",
+
+o:["蘇格拉底式提問","自由聯想","夢的解析","系統減敏感法"],
+
+a:0,
+
+e:"蘇格拉底式提問透過開放式問題，引導個案檢視想法與發現其他可能的觀點。"
+
+},
+
+{
+
+q:"個案認為「只要主動打招呼，別人一定會冷漠對我」，治療師請他實際向三位同學打招呼並記錄結果。這是？",
+
+o:["認知三角","心理過濾","貼標籤","行為實驗"],
+
+a:3,
+
+e:"行為實驗是在現實生活中測試信念，包含預測、行動、記錄結果與修正認知。"
+
+},
+
+{
+
+q:"下列哪一個想法最符合「認知重建」後較平衡的觀點？",
+
+o:["我這次失誤，證明我一直都很差","我這次有失誤，但可以從中學習","只要不去想，問題就會消失","別人一定要認同我才算成功"],
+
+a:1,
+
+e:"認知重建不是強迫自己正向思考，而是將僵化、極端的想法調整為更符合證據且有彈性的觀點。"
+
+},
+
+{
+
+q:"依照你們報告的治療關係，治療師與個案最理想的互動方式是？",
+
+o:["治療師直接決定個案應該怎麼想","個案只需要被動聽從指示","雙方合作探索想法，個案主動參與","治療師避免討論個案的日常經驗"],
+
+a:2,
+
+e:"Beck 認知治療強調合作關係，治療師透過提問與證據檢驗協助個案，個案則主動參與並練習應用技巧。"
+
+}
+
+];
+
+let index=0,answers=[],locked=false;
+
+const app=document.getElementById("app");
+
+function render(html){app.innerHTML=html}
+
+function start(){
+
+index=0;answers=[];locked=false;showQuestion()
+
+}
+
+function intro(){
+
+render('<div class="card center">'+
+
+'<div class="art">🧠✨</div>'+
+
+'<span class="tag">知識挑戰</span>'+
+
+'<h1>Beck 認知治療<br>你記得多少？</h1>'+
+
+'<p>剛剛報告的重點，你都記住了嗎？<br>一起來挑戰看看吧！</p>'+
+
+'<p>共 10 題・每題 10 分・滿分 100 分</p>'+
+
+'<button class="primary" onclick="start()">開始挑戰 →</button>'+
+
+'</div>')
+
+}
+
+function showQuestion(){
+
+locked=false;
+
+let x=questions[index];
+
+render('<div class="card">'+
+
+'<div class="meta"><span>QUESTION '+(index+1)+' / '+questions.length+'</span><span>目前 '+answers.filter((v,i)=>v===questions[i].a).length*10+' 分</span></div>'+
+
+'<div class="bar"><div class="fill" style="width:'+((index)/questions.length*100)+'%"></div></div>'+
+
+'<h2>'+x.q+'</h2>'+
+
+'<div id="options">'+x.o.map((s,i)=>'<button class="option" onclick="choose('+i+')">'+String.fromCharCode(65+i)+'　'+s+'</button>').join('')+'</div>'+
+
+'<div id="feedback"></div>'+
+
+'<button id="next" class="primary" onclick="nextQuestion()" style="display:none">'+(index===questions.length-1?'查看我的成績 →':'下一題 →')+'</button>'+
+
+'</div>')
+
+}
+
+function choose(choice){
+
+if(locked)return;
+
+locked=true;
+
+let x=questions[index];
+
+answers.push(choice);
+
+let buttons=document.querySelectorAll(".option");
+
+buttons.forEach((b,i)=>{
+
+b.disabled=true;
+
+if(i===x.a)b.classList.add("correct");
+
+if(i===choice&&choice!==x.a)b.classList.add("wrong");
+
+});
+
+document.getElementById("feedback").innerHTML=
+
+'<div class="feedback"><strong>'+(choice===x.a?'🎉 答對了！':'💡 再記住這個觀念！')+'</strong><p>正確答案：'+String.fromCharCode(65+x.a)+'　'+x.o[x.a]+'</p>'+x.e+'</div>';
+
+document.getElementById("next").style.display="block";
+
+}
+
+function nextQuestion(){
+
+index++;
+
+if(index<questions.length)showQuestion();
+
+else results();
+
+}
+
+function results(){
+
+let correct=answers.filter((v,i)=>v===questions[i].a).length;
+
+let score=correct*10;
+
+let comment=score===100?'太厲害了！你是 Beck 知識王！🏆':score>=80?'非常棒！你掌握了大部分重點！🌟':score>=60?'不錯喔！再複習幾個觀念就更完整了！💜':'繼續加油！透過解析再認識 Beck 的認知治療！🌱';
+
+let missed=questions.map((q,i)=>({q,i})).filter(({q,i})=>answers[i]!==q.a);
+
+render('<div class="card center">'+
+
+'<div class="art">🎓</div>'+
+
+'<span class="tag">挑戰完成</span>'+
+
+'<h1>你的知識挑戰成績</h1>'+
+
+'<div class="score">'+score+'<small> / 100</small></div>'+
+
+'<p>答對 '+correct+' / '+questions.length+' 題</p>'+
+
+'<h2>'+comment+'</h2>'+
+
+(missed.length?'<div style="text-align:left"><h2>📖 錯題複習</h2>'+
+
+missed.map(({q,i})=>'<div class="review"><strong>第 '+(i+1)+' 題：'+q.q+'</strong><p>你的答案：'+q.o[answers[i]]+'</p><p>正確答案：'+q.o[q.a]+'</p><small>'+q.e+'</small></div>').join('')+'</div>':'<p>全部答對！每個觀念都掌握了！</p>')+
+
+'<button class="primary" onclick="start()">再挑戰一次 ↻</button>'+
+
+'</div>')
+
+}
+
+intro();
+
+</script>
+
+</body>
+
+</html>
